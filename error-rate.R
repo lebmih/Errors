@@ -31,6 +31,7 @@ concatenate <- function(files){
   
 }
 
+dataframe <- concatenate(files)
 
 # Dropping waste
 drops <- c("v.end.in.cdr3", "d.start.in.cdr3",
@@ -54,8 +55,12 @@ head(dataframe)
 # Dropping some variables
 drops2 <- c('mutations.FR1',  'mutations.CDR1', 
             'mutations.FR2', 'mutations.CDR2', 
-            'mutations.FR3', 'mutations.CDR3', 'mutations.FR4',
-            'in.frame', 'has.cdr3', 'no.stop', 'complete', 'canonical')
+            'mutations.FR3', 'mutations.FR4',
+            'in.frame', 'has.cdr3', 'no.stop', 'complete', 'canonical',
+            'cdr.insert.qual', 'mutations.qual', 'v.end.in.cdr3',
+            'd.start.in.cdr3', 'd.end.in.cdr3', 'j.start.in.cdr3', 'v.del',
+            'd.del.5', 'd.del.3', 'j.del', 'pol.v', 'pol.d.5', 'pol.d.3',
+            'pol.j', 'in.frame')
 dataframe2 <- dataframe[,!(names(dataframe) %in% drops2)]
 
 dataframe2 <- dataframe2[order(dataframe2$cdr3nt, dataframe2$cdr3aa, dataframe2$v, dataframe2$d, dataframe2$j),]
