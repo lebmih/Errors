@@ -49,8 +49,31 @@ print(paste("Loaded", nrow(dataframe), "clonotypes from",
 head(dataframe)
 
 
+# Dataframe containing EHEB variants
+ehebs <- data.frame(var = c("EHEB", "EHEB-V1", "EHEB-V2"),
+                    seq = c("TGTGCGAGAGATGATGGCGGGGGAAAGGGTGACTACGGAAGACTTTGG",
+                            "TGTGGGAGAGATGATGGCGGGGGAAAGGGTGACTACGGAAGACTTTGG",
+                            "TGTGCGACACATGATGGCGGGGGAAAGGGTGACTACGGAAGACTTTGG"))
+
+# Named vector of EHEB variants (just to compare which form is more convenient)
+ehebvec <- c(EHEB = "TGTGCGAGAGATGATGGCGGGGGAAAGGGTGACTACGGAAGACTTTGG",
+             EHEB_V1 = "TGTGGGAGAGATGATGGCGGGGGAAAGGGTGACTACGGAAGACTTTGG",
+             EHEB_V2 = "TGTGCGACACATGATGGCGGGGGAAAGGGTGACTACGGAAGACTTTGG")
+
+
 
 # Aggregate by CDR3 and discard all differences in V/J germline outside CDR3
+df <- dataframe[, c("cdr3nt", "freq", "count")]
+print(paste("There are ", length(unique(df$cdr3nt)),
+            " unique cdr3s in this dataset"))
+dffreq <- as.data.frame(tapply(df$freq, df$cdr3nt, sum))
+dfcount <- as.data.frame(tapply(df$count, df$cdr3nt, sum))
+df <- cbind(dffreq, dfcount)
+df$cdr3nt <- rownames(dffreq)
+rownames(df) <- c()
+colnames(df) <- c("freq", "count", "cdr3nt")
+df <- df[order(df$count, decreasing = TRUE),]
+
 
 # Dropping some variables
 drops2 <- c('mutations.FR1',  'mutations.CDR1', 
@@ -63,4 +86,3 @@ drops2 <- c('mutations.FR1',  'mutations.CDR1',
             'pol.j', 'in.frame')
 dataframe2 <- dataframe[,!(names(dataframe) %in% drops2)]
 
-dataframe2 <- dataframe2[order(dataframe2$cdr3nt, dataframe2$cdr3aa, dataframe2$v, dataframe2$d, dataframe2$j),]
